@@ -1,0 +1,32 @@
+<!doctype html>
+<title>Login</title>
+<html>
+   <body>
+   <h1>NLP System</h1>
+   <p>Please login here</p>
+    <form action="{{url_for('.login') }}" method="POST">
+       <table>
+           <tr>
+              <td>username:</td>
+            <td><input type="text" name='username' placeholder="Username"></td>
+           </tr>
+         <tr>
+             <td>password:</td>
+              <td><input type="password" name='password' placeholder="Password"></td>
+           </tr>
+          <tr>
+                <td><input type="submit" value="login"></td>
+          </tr>
+       </table>
+      </form>
+      
+      {% for message in get_flashed_messages() %}
+      <div class=flash>{{ message }}</div>
+      {% endfor %}
+
+      <form action="{{url_for('.register') }}">
+         <p>Please register here before log in</p>
+         <input type = "submit" value="Register"/>
+      </form> 
+   </body>
+</html>

@@ -1,0 +1,36 @@
+<!doctype html>
+<title>Select file to analyze</title>
+<html>
+   <body>
+      <h1>NLP analysis</h1>
+      <div>
+         <form action = "{{url_for('.file_select') }}" method = "POST">
+         <h1>Welcome {{user}}</h1>
+         <h3>Filenames already in the database:</h3>
+         <p>{{filenames}}</p>
+         <h3>Select files to analyze</h3>
+         <p>In the format *.pdf without quotation mark
+            For example,
+            stress-in-america-covid.pdf
+         </p>
+         <input type = "text" name = "selectedfile" id = "selectedfile" />
+         <input type = "submit" value="select"/>
+         {% for message in get_flashed_messages() %}
+         <div class=flash>{{ message }}</div>
+         {% endfor %}
+         </form>  
+        </div> 
+         <div>
+            <form action= '/upload'>
+               <h3>Return to upload page</h3>
+               <input type = "submit" value="Return to upload page"/>
+            </form>
+         </div>
+          <div>
+             <form action= '/'>
+                <h3>Log out</h3>
+                <input type = "submit" value="Log out"/>
+             </form>
+          </div>
+   </body>
+</html>

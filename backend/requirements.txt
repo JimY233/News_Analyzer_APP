@@ -1,0 +1,9 @@
+Flask
+flask-restful
+Werkzeug
+PyPDF2
+nltk
+google-cloud-language
+beautifulsoup4
+html5lib
+newsapi-python

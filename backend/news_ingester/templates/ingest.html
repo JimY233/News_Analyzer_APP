@@ -1,0 +1,40 @@
+<!doctype html>
+<title>News Ingest</title>
+<html>
+   <body>
+      <h1>News Ingest</h1>
+      <form action = "{{url_for('.news_ingest') }}" method = "POST" 
+         enctype = "multipart/form-data">
+         <h1>Welcome {{user}}</h1>
+         <h3>Ingest news by keyword</h3>
+         <p>Number of news(1-100)</p>
+         <input type = "text" name = "num" id = "num" />
+         <p>Keyword</p>
+         <input type = "text" name = "keyword" id = "keyword" />
+         <p>Ingest button</p>
+         <input type = "submit" value="ingest"/>
+         {% for message in get_flashed_messages() %}
+         <div class=flash>{{ message }}</div>
+         {% endfor %}
+         <h3>Ingest Result</h3>
+         <p>titles:</p>
+         <p>{{titles}}</p>
+         <p>contents:</p>
+         <p>{{contents}}</p>
+         <h3>news already in the database</h3>
+         <p>{{records}}</p>
+      </form>   
+      <div>
+         <form action = "{{url_for('.file_select') }}">
+         <h3>NLP analyze the files you uploaded</h3>
+         <input type = "submit" value="Analyze"/>
+         </form>   
+      </div>
+      <div>
+         <form action= '/'>
+            <h3>Log out</h3>
+            <input type = "submit" value="Log out"/>
+         </form>
+      </div>
+   </body>
+</html>
