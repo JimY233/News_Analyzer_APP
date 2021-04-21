@@ -1,0 +1,31 @@
+<!doctype html>
+<title>Upload new File</title>
+<html>
+   <body>
+      <h1>Upload new File</h1>
+      <form action = "{{url_for('.upload_file') }}" method = "POST" 
+         enctype = "multipart/form-data">
+         <h1>Welcome {{user}}</h1>
+         <p>Please upload PDF files</p>
+         <input type = "file" name = "file" />
+         <input type = "submit"/>
+         {% for message in get_flashed_messages() %}
+         <div class=flash>{{ message }}</div>
+         {% endfor %}
+         <h3>filenames already in the database</h3>
+         <p>{{filenames}}</p>
+      </form>   
+      <div>
+         <form action = "{{url_for('.file_select') }}">
+         <h3>NLP analyze the files you uploaded</h3>
+         <input type = "submit" value="Analyze"/>
+         </form>   
+      </div>
+      <div>
+         <form action= '/'>
+            <h3>Log out</h3>
+            <input type = "submit" value="Log out"/>
+         </form>
+      </div>
+   </body>
+</html>
