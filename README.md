@@ -32,12 +32,12 @@ Using Flask as backend
 Database chosing sqlite  
 Using session to secure  
 
-**In homework2**    
+**In homework2**     
 Already finished basic function like upload PDF files, return sentiment and keyword frequency search, download news when determining number and keyword    
 but frontend uses html   
 You can see them under `/backend/hw2modules`. There are hree modules File_uploader, NLP, News_Ingester have tested working with html templates using `return render *.html`    
 
-**Updated from project2**   
+### Updated from project2 
 The latest flask python file is `/backend/app/app.py` and `/backend/app/nlp_app.py`  
 `/backend/app/app.py` has not implemented nlp part and the sentiment return is always "" for the convenience of testing  
 `/backend/app/nlp_app.py` is the final version  
@@ -64,11 +64,18 @@ nlp function: translate and so on
 doc type allowed to upload  
 Delete files
 
-**Tested using postman**    
-As you can see below, after logging in, api ingest news with url and sentiment, then it can shownews and savenews   
+### Tested using postman   
+**Login and signup**   
+<div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/postman_signup.PNG"/></div> 
+<div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/postman_login.PNG"/></div> 
+
+**News Ingest**    
+As you can see below, after logging in, api ingest news with url and sentiment, then it can shownews and savenews     
 <div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/postman_ingest.PNG"/></div> 
-<div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/postman_shownews.PNG"/></div> 
+choose one title  
 <div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/postman_savenews.PNG"/></div> 
+<div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/postman_getrecords.PNG"/></div> 
+<div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/postman_shownews.PNG"/></div> 
 
 **Frontend result**  
 <div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/fileshow.PNG"/></div> 
