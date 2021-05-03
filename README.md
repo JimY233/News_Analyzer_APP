@@ -50,7 +50,8 @@ It can be helpful for REACT frontend to get user_id, file_id, text, sentiment re
 (4) For `upload_file()` and `multiupload_file()` files to be uploaded of all type like jpg will be saved into files and besides that, the content of `pdf`, `txt` and `docx`(import docx) files will be insert to database       
 (5) `multiupload_file()` upload files allow uploading several files at one time using `request.files.getlist()`       
 already tested successfully in REACT frontend     
-(6) wrote `rename_files()` api so that the files can be renamed in database and renamed in stored folder    
+(6) wrote `rename_files()` api so that the files can be renamed in database and renamed in stored folder 
+wrote `delete_files()` api so that the files can be deleted in database
 (7) separate ingest news to get news information `news_ingest` and choose the news to save to database `save_news()`     
 (8) `news_ingest` and `news_show()` return url so that user can click on the url link to see the original news    
 (9) Implemented nlp part in `/backend/app/nlp_app.py`: sentiment result is saved in database when uploading or ingesting, then we can read it using `news_show()`  
@@ -59,10 +60,8 @@ Partially done:
 Clean db functions to db.py (already create db.py but functions in app.py have not been clean up totally)      
 
 To be done:  
-Continue to be consistent with REACT, especially nlp part(upload sentiment, search show sentiment)  
 nlp function: translate and so on    
-doc type allowed to upload  
-Delete files
+doc type allowed to upload to database
 
 ### Tested using postman   
 **Login and signup**   
@@ -78,7 +77,12 @@ choose one title
 <div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/postman_shownews.PNG"/></div> 
 
 **Frontend result**  
+For file upload and show  
+<div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/upload_1.PNG"/></div> 
+<div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/upload_2.PNG"/></div> 
 <div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/fileshow.PNG"/></div> 
+
+For news ingest, save and show  
 <div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/ingest.PNG"/></div> 
 <div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/newsshow.PNG"/></div> 
 

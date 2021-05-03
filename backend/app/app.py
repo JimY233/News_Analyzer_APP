@@ -25,6 +25,7 @@ from flask import jsonify
 from flask_cors import CORS
 
 import json
+import docx
 
 
 app = Flask(__name__)
@@ -212,7 +213,33 @@ def rename_file():
          'error' : 'file_id not inside the database'
       }) 
 
-      
+ @app.route('/api/delete/<file_id>', methods = ['DELETE'])
+def delete_file(file_id):
+   user_id = session.get('user_id')
+   if user_id is None:
+      #return render_template('login.html')
+      return jsonify({
+            'status' : 'error',
+            'error' : 'session failed'
+         })  
+
+   conn = sqlite3.connect(app.config['DATABASE'])
+   cursor = conn.cursor()
+   if cursor.execute('SELECT file_id FROM files WHERE user_id = ? and file_id = ?', (user_id,file_id)).fetchone() is not None:
+      cursor.execute('delete from files set where user_id = ? and file_id = ?',(user_id,file_id))
+      cursor.close()
+      conn.close()
+      return jsonify({
+         'status' : 'success',
+         'new_file_id' : new_file_id
+      })  
+   else:
+      cursor.close()
+      conn.close()
+      return jsonify({
+         'status' : 'error',
+         'error' : 'file_id not inside the database'
+      })      
 	
 @app.route('/api/upload', methods = ['GET', 'POST'])
 #@app.route('/upload/<user_id>', methods = ['GET', 'POST'])
@@ -253,6 +280,11 @@ def upload_file():
                with open(path, "r",encoding='utf-8') as txtfile:
                   page_content = txtfile.read()
                logging.info("text received")
+            elif os.path.splitext(filename)[-1][1:] == "docx": 
+               docxfile = docx.Document(path)
+               for p in docxfile.paragraphs:
+                  page_content += p.text
+               logging.info("DOCX converted to text")
             else:
                page_content = filename
 
@@ -350,9 +382,10 @@ def multiupload_file():
                   page_content = txtfile.read()
                logging.info("text received")
             elif os.path.splitext(filename)[-1][1:] == "docx": 
-               docxfile = docx.opendocx(path)
-               text_list = docx.getdocumenttext(docxfile)
-               page_content = " ".join(text_list)
+               docxfile = docx.Document(path)
+               for p in docxfile.paragraphs:
+                  page_content += p.text
+               logging.info("DOCX converted to text")
             else:
                page_content = filename
             #nlp analysis
