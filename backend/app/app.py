@@ -19,6 +19,7 @@ import logging
 from nlp.convert import *
 from news.newsapi import *
 from database.db import *
+from news.guardianapi import gapi
 
 import os
 from flask import jsonify
@@ -213,7 +214,7 @@ def rename_file():
          'error' : 'file_id not inside the database'
       }) 
 
- @app.route('/api/delete/<file_id>', methods = ['DELETE'])
+@app.route('/api/delete/<file_id>', methods = ['DELETE'])
 def delete_file(file_id):
    user_id = session.get('user_id')
    if user_id is None:
@@ -643,13 +644,13 @@ def news_ingest():
                # cursor.execute('create table if not exists news (user_id, id INTEGER PRIMARY KEY, keyword, title, url, content, sentiment)')
                # existed = False
                # records = cursor.execute('select id, title from news where user_id=?', (user_id,)).fetchall()
-               for i in response_json['articles']:
-                  titles.append(i['title'])
-                  contents.append(i['title']+" "+i['content'])
-                  urls.append(i['url'])
-                  sentiment = ""
-                  #sentiment = NLP_analyze(i['title']+" "+i['content'])
-                  articles.append([user_id,keyword,i['title'],i['url'],i['title']+" "+i['content'],sentiment])
+               # for i in response_json['articles']:
+               #    titles.append(i['title'])
+               #    contents.append(i['title']+" "+i['content'])
+               #    urls.append(i['url'])
+               #    sentiment = ""
+               #    #sentiment = NLP_analyze(i['title']+" "+i['content'])
+               #    articles.append([user_id,keyword,i['title'],i['url'],i['title']+" "+i['content'],sentiment])
                #    for record in records:
                #       if i['title'] == record[1]:
                #          existed = True
@@ -659,6 +660,13 @@ def news_ingest():
                # cursor.close()  
                # conn.commit()   
                # conn.close()
+               for i in response_json['results']:
+                  titles.append(i['webTitle'])
+                  contents.append(i['fields']['body'])
+                  urls.append(i['webUrl'])
+                  #sentiment = ""
+                  sentiment = NLP_analyze(i['fields']['body'])
+                  articles.append([user_id,keyword,i['webTitle'],i['webUrl'],i['fields']['body'],sentiment])
                return jsonify({
                   'status' : 'success',
                   'user' : user_id,

@@ -54,7 +54,11 @@ already tested successfully in REACT frontend
 wrote `delete_files()` api so that the files can be deleted in database
 (7) separate ingest news to get news information `news_ingest` and choose the news to save to database `save_news()`     
 (8) `news_ingest` and `news_show()` return url so that user can click on the url link to see the original news    
-(9) Implemented nlp part in `/backend/app/nlp_app.py`: sentiment result is saved in database when uploading or ingesting, then we can read it using `news_show()`  
+(9) Implemented nlp part in `/backend/app/nlp_app.py`: sentiment result is saved in database when uploading or ingesting, then we can read it using `news_show()`  10
+(10) used to use news api in `news_ingest()` but it can only read 200 chars of content each news     
+News api: The unformatted content of the article, where available. This is truncated to 200 chars.    
+Changed to guardian api and thus can read full context of news  
+<div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/ingest_content.PNG"/></div> 
 
 Partially done:  
 Clean db functions to db.py (already create db.py but functions in app.py have not been clean up totally)      

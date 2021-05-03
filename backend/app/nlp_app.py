@@ -17,7 +17,8 @@ import logging
 from nlp.nlp_search import *
 from nlp.NLPAPI import *
 from nlp.convert import *
-from news.newsapi import *
+from news.newsapi import newsapi
+from news.guardianapi import gapi
 from database.db import *
 
 import os
@@ -637,28 +638,23 @@ def news_ingest():
                num = 1
                # flash("Invalid number and thus use default number = 1")
             if num >=1 and num <= 100:
-               response_json = newsapi(keyword,num)
-               # conn = sqlite3.connect(app.config['DATABASE'])
-               # cursor = conn.cursor ()
-               # cursor.execute('create table if not exists news (user_id, id INTEGER PRIMARY KEY, keyword, title, url, content, sentiment)')
-               # existed = False
-               # records = cursor.execute('select id, title from news where user_id=?', (user_id,)).fetchall()
-               for i in response_json['articles']:
-                  titles.append(i['title'])
-                  contents.append(i['title']+" "+i['content'])
-                  urls.append(i['url'])
+               #response_json = newsapi(keyword,num)
+               response_json = gapi(keyword,num)
+               # for i in response_json['articles']:
+               #    titles.append(i['title'])
+               #    contents.append(i['title']+" "+i['content'])
+               #    urls.append(i['url'])
+               #    #sentiment = ""
+               #    sentiment = NLP_analyze(i['title']+" "+i['content'])
+               #    articles.append([user_id,keyword,i['title'],i['url'],i['title']+" "+i['content'],sentiment])
+               for i in response_json['results']:
+                  titles.append(i['webTitle'])
+                  contents.append(i['fields']['body'])
+                  urls.append(i['webUrl'])
                   #sentiment = ""
-                  sentiment = NLP_analyze(i['title']+" "+i['content'])
-                  articles.append([user_id,keyword,i['title'],i['url'],i['title']+" "+i['content'],sentiment])
-               #    for record in records:
-               #       if i['title'] == record[1]:
-               #          existed = True
-               #    if not existed:
-               #       cursor.execute('insert into news (user_id, keyword, title, url, content, sentiment) values(?,?,?,?,?,?)',(user_id, keyword, i['title'], i['url'], i['title']+" "+i['content'], sentiment))
-               # records = cursor.execute('select id, title, url from news where user_id=? and keyword = ?', (user_id,keyword)).fetchall()
-               # cursor.close()  
-               # conn.commit()   
-               # conn.close()
+                  sentiment = NLP_analyze(i['fields']['body'])
+                  articles.append([user_id,keyword,i['webTitle'],i['webUrl'],i['fields']['body'],sentiment])
+               
                return jsonify({
                   'status' : 'success',
                   'user' : user_id,
