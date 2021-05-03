@@ -28,39 +28,35 @@ search based on keywords
 discover content from the WEB through url  
 
 ## backend  
-Using Flask  
-Three modules File_uploader, NLP, News_Ingester in `/backend/modulename` and have tested working with html templates using `return render *.html`  
+Using Flask as backend  
 Database chosing sqlite  
 Using session to secure  
 
-Combined together in `backend\app\app.py` and return json files to frontend now  
-function: login, signup, upload_files, download news, nlp analysis  
-
-**Updated from project2**  
-In homework2:    
-Already finished basic function like upload PDF files, return sentiment and keyword frequency search, download news when determining number and keyword  
+**In homework2**    
+Already finished basic function like upload PDF files, return sentiment and keyword frequency search, download news when determining number and keyword    
 but frontend uses html   
+You can see them under `/backend/hw2modules`. There are hree modules File_uploader, NLP, News_Ingester have tested working with html templates using `return render *.html`    
+
+**Updated from project2**   
+The latest flask python file is `/backend/app/app.py` and `/backend/app/nlp_app.py`  
+`/backend/app/app.py` has not implemented nlp part and the sentiment return is always "" for the convenience of testing  
+`/backend/app/nlp_app.py` is the final version  
 
 Finished:   
-(1) Use Session to secure the backend    
-(2) Use `request.get_json()`, `request.files()` and `return json files` to be consistent with REACT frontend       
-(3) Added functions: `get_curent_user`, `getrecords`, `file_show` and so on to rich the functionality    
-It can be helpful for REACT frontend to get user_id, file_id, text, sentiment result from backend   
-(4) Files to be uploaded of all type like jpg will be saved into files and besides that, the content of `pdf`, `txt` and `docx`(import docx) files will be insert to database     
-(5) Upload files allow uploading several files at one time using `request.files.getlist()`     
-already tested successfully in REACT frontend   
-(6) wrote `rename_files` api so that the files can be renamed in database and renamed in stored folder  
-(7) return url when shownews  
-(8) separate ingest news to get news information and choose the news to save to database
-
-Tested using postman  
-<div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/postman_ingest.PNG"/></div> 
-<div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/postman_shownews.PNG"/></div> 
-<div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/postman_savenews.PNG"/></div> 
+(1) Use Session to secure the backend     
+(2) Use `request.get_json()`, `request.files()` and `return json files` to be consistent with REACT frontend         
+(3) Added functions: `get_curent_user()`, `getrecords()`, `file_show()` and so on to rich the functionality      
+It can be helpful for REACT frontend to get user_id, file_id, text, sentiment result from backend     
+(4) For `upload_file()` and `multiupload_file()` files to be uploaded of all type like jpg will be saved into files and besides that, the content of `pdf`, `txt` and `docx`(import docx) files will be insert to database       
+(5) `multiupload_file()` upload files allow uploading several files at one time using `request.files.getlist()`       
+already tested successfully in REACT frontend     
+(6) wrote `rename_files()` api so that the files can be renamed in database and renamed in stored folder    
+(7) separate ingest news to get news information `news_ingest` and choose the news to save to database `save_news()`     
+(8) `news_ingest` and `news_show()` return url so that user can click on the url link to see the original news    
+(9) Implemented nlp part in `/backend/app/nlp_app.py`: sentiment result is saved in database when uploading or ingesting, then we can read it using `news_show()`  
 
 Partially done:  
 Clean db functions to db.py (already create db.py but functions in app.py have not been clean up totally)      
-return sentiment when show and shownews (all "" so far)  
 
 To be done:  
 Continue to be consistent with REACT, especially nlp part(upload sentiment, search show sentiment)  
@@ -68,6 +64,16 @@ nlp function: translate and so on
 doc type allowed to upload  
 Delete files
 
+**Tested using postman**    
+As you can see below, after logging in, api ingest news with url and sentiment, then it can shownews and savenews   
+<div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/postman_ingest.PNG"/></div> 
+<div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/postman_shownews.PNG"/></div> 
+<div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/postman_savenews.PNG"/></div> 
+
+**Frontend result**  
+<div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/fileshow.PNG"/></div> 
+<div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/ingest.PNG"/></div> 
+<div align=center><img src="https://github.com/wq-yang/news-analyzer-app/blob/main/backend/figures/newsshow.PNG"/></div> 
 
 ## frontend  
 Using React(with ant design)+Redux
