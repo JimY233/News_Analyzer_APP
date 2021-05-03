@@ -7,3 +7,4 @@ google-cloud-language
 beautifulsoup4
 html5lib
 newsapi-python
+docx

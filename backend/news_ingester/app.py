@@ -24,7 +24,7 @@ app.config['SECRET_KEY'] = os.urandom(24)
 
 #where database locally
 #app.config['DATABASE'] = r'/home/ubuntu/news-analyzer-JimY233/mydatabase.db'
-app.config['DATABASE'] = r'C:\Users\yjm57\OneDrive\Documents\GitHub\news-analyzer-JimY233\mydatabase.db'
+app.config['DATABASE'] = r'C:\Users\yjm57\OneDrive\Desktop\news-analyzer-app\backend\news_ingester\mydatabase.db'
 
 #where pdf files saved locally
 #app.config['UPLOAD_FOLDER'] = '/home/ubuntu/news-analyzer-JimY233/file_uploader/pdfexamples/'
@@ -61,18 +61,50 @@ def login():
          if error is None:
             session.clear()
             session['user_id'] = user[0]
+            cursor.execute('create table if not exists news (user_id, id INTEGER PRIMARY KEY, keyword, title, content)') 
             cursor.execute('create table if not exists files (user_id, file_id, text)')
+            records = cursor.execute('select id, title from news where user_id=?', (username,)).fetchall()
             values = cursor.execute('select file_id from files where user_id=?', (username,)).fetchall()
             cursor.close()
             conn.close()
 
-            return render_template('ingest.html', user = username, filenames = values)
+            return render_template('select.html', user = username, files = values, filenames = records)
 
          cursor.close()
          conn.close()
          flash(error)
 
    return render_template('login.html')
+
+
+# @app.route('/choose', methods = ['GET', 'POST'])
+# def choose():
+#    user_id = session.get('user_id')
+#    if user_id is None:
+#       return render_template('login.html')
+   
+#    conn = sqlite3.connect(app.config['DATABASE'])
+#    cursor = conn.cursor()
+#    values = cursor.execute('select file_id from files where user_id=?', (user_id,)).fetchall()
+#    records = cursor.execute('select id, title from news where user_id=?', (user_id,)).fetchall()
+#    cursor.close()
+#    conn.close()
+
+#    if request.method == 'POST' and 'selectedfile' in request.form:
+#       select = request.form['selectedfile']
+#       if not select:
+#          error = 'Please enter filename to be selected to analysis.'
+#          flash(error)
+#       else:
+#          select = int(select)
+#          for record in records:
+#             if record[0] == select:
+#                session['news_id'] = record[0]
+#                return render_template('query.html', user = user_id, files = values, filenames = records, selected = record[1])
+#          flash("wrong news id selected")
+
+#    return render_template('choose.html', user = user_id, files = values, filenames = records)
+
 
 @app.route('/register', methods=('GET', 'POST'))
 def register():
@@ -170,6 +202,79 @@ def news_ingest():
 
    return render_template('ingest.html', user = user_id, records = records)
 
+	
+@app.route('/upload', methods = ['GET', 'POST'])
+#@app.route('/upload/<user_id>', methods = ['GET', 'POST'])
+def upload_file():
+   user_id = session.get('user_id')
+   if user_id is None:
+      return render_template('login.html')
+
+   if request.method == 'POST':
+      if 'file' in request.files:
+         f = request.files['file']
+         if f.filename != '':
+            filename = secure_filename(f.filename)
+            path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            f.save(path)
+            logging.info("Files temporarily saved")
+
+            page_content = ""
+            if os.path.splitext(filename)[-1][1:] == "pdf":
+               pdfFileObj = open(path, 'rb') 
+               pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
+               totalpage = pdfReader.numPages
+               logging.info("Number of pages:",totalpage)
+               for page in range(totalpage): 
+                  pageObject = pdfReader.getPage(page) 
+                  page_content = page_content + pageObject.extractText()
+               logging.info("PDF converted to text")
+            elif os.path.splitext(filename)[-1][1:] == "txt":   
+               with open(path, "r") as f:
+                  page_content = f.read()
+
+            #os.remove(path)
+            #logging.info("PDF deleted")
+
+            #database insert
+            conn = sqlite3.connect(app.config['DATABASE'])
+            cursor = conn.cursor ()
+            cursor.execute('create table if not exists files (user_id, file_id, text)') 
+            records = cursor.execute(
+               'SELECT file_id FROM files WHERE user_id = ?', (user_id,)
+            ).fetchall()
+            updated = False
+            for record in records:
+               if record[0] == filename:
+                  cursor.execute('update files set text = ? where user_id = ? and file_id = ?',(page_content,user_id,filename))
+                  updated = True
+            if updated:
+               flash('file uploaded and updated successfully')
+            else:
+               cursor.execute('insert into files values(?,?,?)',(user_id,filename,page_content))
+               flash('file uploaded and saved successfully')
+            cursor.close()  
+            conn.commit()   
+            conn.close()
+
+            pdfFileObj.close() 
+
+         #f.filename=='' i.e. user did not select a file but click upload
+         else:
+            flash("no files selected")
+      
+   #database search
+   conn = sqlite3.connect(app.config['DATABASE'])
+   cursor = conn.cursor()
+   #cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+   #Tables=cursor.fetchall()
+   #logging.info("Tables in the databse:",Tables)
+   records = cursor.execute('select file_id from files where user_id=?', (user_id,)).fetchall()
+   cursor.close()
+   conn.close()
+
+   return render_template('upload.html', user = user_id, filenames = records)
+
 @app.route('/select', methods = ['GET', 'POST'])
 def file_select():
    user_id = session.get('user_id')
@@ -179,6 +284,7 @@ def file_select():
    conn = sqlite3.connect(app.config['DATABASE'])
    cursor = conn.cursor()
    records = cursor.execute('select id, title from news where user_id=?', (user_id,)).fetchall()
+   values = cursor.execute('select file_id from files where user_id=?', (user_id,)).fetchall()
    cursor.close()
    conn.close()
 
@@ -192,10 +298,10 @@ def file_select():
          for record in records:
             if record[0] == select:
                session['news_id'] = record[0]
-               return render_template('query.html', user = user_id,  filenames = records, selected = record[1])
+               return render_template('query.html', user = user_id, files = values, filenames = records, selected = record[1])
          flash("wrong news id selected")
 
-   return render_template('select.html', user = user_id,  filenames = records)
+   return render_template('select.html', user = user_id, files = values, filenames = records)
 
 
 @app.route('/query', methods = ['GET', 'POST'])
@@ -207,14 +313,16 @@ def file_query():
    conn = sqlite3.connect(app.config['DATABASE'])
    cursor = conn.cursor()
    records = cursor.execute('select id, title from news where user_id=?', (user_id,)).fetchall()
+   values = cursor.execute('select file_id from files where user_id=?', (user_id,)).fetchall()
 
-   file_id = session.get('news_id')
-   if file_id is None:
-      return render_template('select.html', user = user_id,  filenames = records)
+   news_id = session.get('news_id')
+   file_id = session.get('file_id')
+   if news_id is None and file_id is None:
+      return render_template('select.html', user = user_id, files = values ,filenames = records)
 
    content = ""
    if request.method == 'POST':
-      cursor.execute('select content from news where user_id=? and id=?', (user_id,file_id))
+      cursor.execute('select content from news where user_id=? and id=?', (user_id,news_id))
       content = cursor.fetchall()
       text = convert(content)
       if 'keyword' in request.form:
@@ -224,14 +332,14 @@ def file_query():
             flash(error)
          else:
             freq = search_nlp(keyword,content)
-            return render_template('query.html', user = user_id,  filenames = records, selected = file_id, data=content, freq=freq)
+            return render_template('query.html', user = user_id, files = values, filenames = records, selected = news_id, data=content, freq=freq)
       else:
          sentiment = NLP_analyze(text)
-         return render_template('query.html', user = user_id,  filenames = records, selected = file_id, data=content, sentiment = sentiment)
+         return render_template('query.html', user = user_id, files = values, filenames = records, selected = news_id, data=content, sentiment = sentiment)
 
    cursor.close()
    conn.close()
-   return render_template('query.html', user = user_id,  filenames = records, selected = file_id)
+   return render_template('query.html', user = user_id, files = values, filenames = records, selected = news_id)
 
 if __name__ == '__main__':
   app.run(debug = True)

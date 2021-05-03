@@ -11,8 +11,8 @@ from google.cloud import language_v1
 #credentials = service_account.Credentials.from_service_account_info(service_account_info)                                
 #client = language_v1.LanguageServiceClient(credentials=credentials)
 
-#credential_path = r"C:\Users\yjm57\OneDrive\Desktop\key\ec500-9845474843db.json"
-credential_path = r"/home/ubuntu/key/ec500-840463134781.json"
+credential_path = r"C:\Users\yjm57\OneDrive\Desktop\key\ec500-9845474843db.json"
+#credential_path = r"/home/ubuntu/key/ec500-840463134781.json"
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credential_path
 
 # Instantiates a client

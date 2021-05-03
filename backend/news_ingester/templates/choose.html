@@ -1,0 +1,42 @@
+<!doctype html>
+<title>Choose Modules</title>
+<html>
+   <body>
+      <h1>Upload or Ingest or NLP?</h1>
+      <div>
+         <form action = "{{url_for('.choose') }}" method = "POST">
+         <h1>Welcome {{user}}</h1>
+         <h3>Filenames uploaded in the database:</h3>
+         <p>{{files}}</p>
+         <h3>Filenames ingested in the database:</h3>
+         <p>{{filenames}}</p>
+         <h3>Select files to analyze</h3>
+         <p>Please select id</p>
+         <p>if nothing inside, please upload or ingest first</p>
+         <input type = "text" name = "selectedfile" id = "selectedfile" />
+         <input type = "submit" value="select"/>
+         {% for message in get_flashed_messages() %}
+         <div class=flash>{{ message }}</div>
+         {% endfor %}
+         </form>  
+        </div> 
+         <div>
+            <form action= '/upload'>
+               <h3>Go to upload page</h3>
+               <input type = "submit" value="Return to upload page"/>
+            </form>
+         </div>
+         <div>
+            <form action= '/ingest'>
+               <h3>Go to ingest page</h3>
+               <input type = "submit" value="Return to ingest page"/>
+            </form>
+         </div>
+          <div>
+             <form action= '/'>
+                <h3>Log out</h3>
+                <input type = "submit" value="Log out"/>
+             </form>
+          </div>
+   </body>
+</html>

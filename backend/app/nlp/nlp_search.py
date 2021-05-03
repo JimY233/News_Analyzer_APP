@@ -14,7 +14,7 @@ def convert(text):
     return content
 
 def search_nlp(search,text):
-    content = convert(text)
+    content = convertfunc.convert(text)
     word = nltk.word_tokenize(content)
     freqdist = FreqDist(word)
     if search in freqdist.keys():
